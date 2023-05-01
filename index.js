@@ -53,13 +53,7 @@ const eventController = (() => {
     const spots = document.querySelectorAll(".spot");
 
     const gameboardHandler = (event) => {
-      let marker = currentTurn;
-      gameboard.placeMarker(event.target.dataset.index, marker);
-      currentTurn = game.takeTurns();
-      let result = game.checkWinner();
-      if (result !== null) {
-        game.finish(result);
-      }
+      game.makeMove(event);
     };
     const bind = () => {
       spots.forEach((spot) => {
@@ -206,6 +200,16 @@ const game = (() => {
     eventController.board.bind();
   };
 
+  const makeMove = (event) => {
+    let marker = currentTurn;
+    gameboard.placeMarker(event.target.dataset.index, marker);
+    currentTurn = takeTurns();
+    let result = checkWinner();
+    if (result !== null) {
+      finish(result);
+    }
+  };
+
   const finish = (result) => {
     console.log(result);
     eventController.board.unbind();
@@ -213,5 +217,5 @@ const game = (() => {
     eventController.againButton.bind();
   };
 
-  return { takeTurns, checkWinner, init, initAgain, finish };
+  return { takeTurns, checkWinner, init, initAgain, makeMove, finish };
 })();
