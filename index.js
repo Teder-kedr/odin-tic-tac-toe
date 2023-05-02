@@ -40,12 +40,15 @@ const displayController = (() => {
   };
 
   const renderScoreboard = () => {
-    heading.style = "font-size: 4rem;";
     heading.textContent = `${scoreboard.score[0]} — ${scoreboard.score[1]}`;
     const xNameSpace = headerContainer.querySelector("h2.x-name");
     const oNameSpace = headerContainer.querySelector("h2.o-name");
-    xNameSpace.textContent = xName;
-    oNameSpace.textContent = oName;
+    if (xName !== "Player one") {
+      xNameSpace.textContent = xName;
+    }
+    if (oName !== "Player two") {
+      oNameSpace.textContent = oName;
+    }
   };
 
   const renderParagraphNextMove = () => {
@@ -236,13 +239,13 @@ const scoreboard = (() => {
   const getNames = () => {
     const formX = document.querySelector("#x-name");
     if (formX.value == "") {
-      xName = "Player 1";
+      xName = "Player one";
     } else {
       xName = formX.value;
     }
     const formO = document.querySelector("#o-name");
     if (formO.value == "") {
-      oName = "Player 2";
+      oName = "Player two";
     } else {
       oName = formO.value;
     }
