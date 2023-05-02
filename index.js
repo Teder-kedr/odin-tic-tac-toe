@@ -24,6 +24,21 @@ const displayController = (() => {
     }
   };
 
+  const renderWinningCombination = (combo) => {
+    console.log(combo);
+    for (let i = 0; i < spots.length; i++) {
+      if (i === combo[0] || i === combo[1] || i === combo[2]) {
+        spots[i].classList.add("winning-combo");
+      }
+    }
+  };
+
+  const unrenderWinningCombination = () => {
+    spots.forEach((spot) => {
+      spot.classList.remove("winning-combo");
+    });
+  };
+
   const renderScoreboard = () => {
     heading.style = "font-size: 4rem;";
     heading.textContent = `${scoreboard.score[0]} — ${scoreboard.score[1]}`;
@@ -95,6 +110,8 @@ const displayController = (() => {
     renderScoreboard,
     renderParagraphNextMove,
     renderParagraphResult,
+    renderWinningCombination,
+    unrenderWinningCombination,
     addStartButton,
     removeStartButton,
     addAgainButton,
@@ -272,7 +289,7 @@ const game = (() => {
         board[a] === board[b] &&
         board[a] === board[c]
       ) {
-        return board[a]; // Return the winning marker
+        return [board[a], [a, b, c]];
       }
     }
 
@@ -299,6 +316,7 @@ const game = (() => {
     eventController.againButton.unbind();
     displayController.removeAgainButton();
     gameboard.reset();
+    displayController.unrenderWinningCombination();
     eventController.board.bind();
     displayController.renderParagraphNextMove();
   };
@@ -316,13 +334,14 @@ const game = (() => {
   };
 
   const finish = (result) => {
-    if (result === "x") {
+    if (result[0] === "x") {
       scoreboard.score[0] += 1;
-    } else if (result === "o") {
+    } else if (result[0] === "o") {
       scoreboard.score[1] += 1;
     }
     scoreboard.render();
-    displayController.renderParagraphResult(result);
+    displayController.renderParagraphResult(result[0]);
+    displayController.renderWinningCombination(result[1]);
     eventController.board.unbind();
     displayController.addAgainButton();
     eventController.againButton.bind();
