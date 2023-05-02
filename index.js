@@ -61,16 +61,16 @@ const displayController = (() => {
     }
   };
 
-  const renderParagraphResult = (result) => {
+  const renderParagraphResult = (res) => {
     const paragraph = textContainer.querySelector("p");
-    if (result === "x") {
+    if (res === "x") {
       paragraph.innerHTML = `<b>${xName}</b> wins!`;
     }
-    if (result === "o") {
+    if (res === "o") {
       paragraph.innerHTML = `<b>${oName}</b> wins!`;
     }
-    if (result === "tie") {
-      paragraph.textContent = "It's a tie! Play again?";
+    if (res === "tie") {
+      paragraph.innerHTML = "It's a tie! Play again?";
     }
   };
 
@@ -297,7 +297,7 @@ const game = (() => {
     }
 
     if (board.every((spot) => typeof spot !== "number")) {
-      return "tie";
+      return ["tie", ["tie", "tie", "tie"]];
     }
 
     return null; // Game is still in progress
