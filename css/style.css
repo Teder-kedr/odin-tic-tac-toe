@@ -60,14 +60,14 @@ h1 {
 
 .spot {
   background-color: rgb(155, 79, 70);
-  cursor: pointer;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.spot:hover {
+.spot.hover {
+  cursor: pointer;
   background-color: rgb(188, 107, 98);
 }
 

@@ -22,6 +22,20 @@ const displayController = (() => {
     }
   };
 
+  const hover = (event) => {
+    event.target.classList.add("hover");
+  };
+
+  const unhover = (event) => {
+    event.target.classList.remove("hover");
+  };
+
+  const resetHovers = () => {
+    spots.forEach((spot) => {
+      spot.classList.remove("hover");
+    });
+  };
+
   const addStartButton = () => {
     textContainer.innerHTML += htmlElements.startButton;
   };
@@ -44,6 +58,9 @@ const displayController = (() => {
     removeStartButton,
     addAgainButton,
     removeAgainButton,
+    hover,
+    unhover,
+    resetHovers,
   };
 })();
 
@@ -55,14 +72,25 @@ const eventController = (() => {
     const gameboardHandler = (event) => {
       game.makeMove(event);
     };
+    const hoverHandler = (event) => {
+      displayController.hover(event);
+    };
+    const unhoverHandler = (event) => {
+      displayController.unhover(event);
+    };
     const bind = () => {
       spots.forEach((spot) => {
         spot.addEventListener("click", gameboardHandler);
+        spot.addEventListener("mouseenter", hoverHandler);
+        spot.addEventListener("mouseleave", unhoverHandler);
       });
     };
     const unbind = () => {
       spots.forEach((spot) => {
+        displayController.resetHovers();
         spot.removeEventListener("click", gameboardHandler);
+        spot.removeEventListener("mouseenter", hoverHandler);
+        spot.removeEventListener("mouseleave", unhoverHandler);
       });
     };
 
@@ -72,7 +100,7 @@ const eventController = (() => {
   const startButton = (() => {
     const textContainer = document.querySelector(".text-container");
 
-    const startButtonHandler = (event) => {
+    const startButtonHandler = () => {
       game.init();
     };
     const bind = () => {
@@ -92,7 +120,7 @@ const eventController = (() => {
   const againButton = (() => {
     const textContainer = document.querySelector(".text-container");
 
-    const againButtonHandler = (event) => {
+    const againButtonHandler = () => {
       game.initAgain();
     };
     const bind = () => {
@@ -129,11 +157,12 @@ const gameboard = (() => {
 
   const placeMarker = (i, marker) => {
     if (gameboardArray[i] === "x" || gameboardArray[i] === "o") {
-      console.log("Place taken!");
+      return false;
     } else {
       gameboardArray[i] = marker;
+      render();
+      return true;
     }
-    render();
   };
 
   return { gameboardArray, reset, placeMarker };
@@ -178,7 +207,7 @@ const game = (() => {
       }
     }
 
-    if (board.every((cell) => typeof cell !== "number")) {
+    if (board.every((spot) => typeof spot !== "number")) {
       return "tie";
     }
 
@@ -202,8 +231,9 @@ const game = (() => {
 
   const makeMove = (event) => {
     let marker = currentTurn;
-    gameboard.placeMarker(event.target.dataset.index, marker);
-    currentTurn = takeTurns();
+    if (gameboard.placeMarker(event.target.dataset.index, marker) === true) {
+      currentTurn = takeTurns();
+    }
     let result = checkWinner();
     if (result !== null) {
       finish(result);
