@@ -10,7 +10,12 @@
 </head>
 
 <body>
-  <h1>Welcome to Tic Tac Toe!</h1>
+  <div class="grid-center">
+    <h2 class="x-name"></h2>
+    <h1 class="header-text">Welcome to Tic Tac Toe!</h1>
+    <h2 class="o-name"></h2>
+  </div>
+
   <div class="gameboard">
     <div class="spot" data-index="0"></div>
     <div class="spot" data-index="1"></div>
@@ -25,6 +30,16 @@
 
   <div class="text-container">
     <p>Welcome to the game! Take part now!</p>
+    <form class="name-forms" autocomplete="off" spellcheck="false">
+      <div class="name-form">
+        <label for="x-name">Player 'X' name:</label>
+        <input type="text" id="x-name" maxlength="15">
+      </div>
+      <div class="name-form">
+        <label for="o-name">Player 'O' name:</label>
+        <input type="text" id="o-name" maxlength="15">
+      </div>
+    </form>
   </div>
 
   <script src="./index.js"></script>

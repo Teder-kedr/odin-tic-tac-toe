@@ -1,12 +1,14 @@
 // DISPLAY CONTROLLER
 const displayController = (() => {
   const htmlElements = {
-    startButton: `<button class="button start" type="button">Start game!</button>`,
+    startButton: `<button class="button start" type="submit">Start game!</button>`,
     againButton: `<button class="button again" type="button">Again?</button>`,
   };
 
   const spots = document.querySelectorAll(".spot");
   const textContainer = document.querySelector(".text-container");
+  const headerContainer = document.querySelector(".grid-center");
+  const heading = document.querySelector("h1");
 
   const renderBoard = () => {
     spots.forEach((spot) => {
@@ -19,6 +21,38 @@ const displayController = (() => {
       } else if (gameboard.gameboardArray[i] === "o") {
         spots[i].classList.add("o");
       }
+    }
+  };
+
+  const renderScoreboard = () => {
+    heading.style = "font-size: 4rem;";
+    heading.textContent = `${scoreboard.score[0]} — ${scoreboard.score[1]}`;
+    const xNameSpace = headerContainer.querySelector("h2.x-name");
+    const oNameSpace = headerContainer.querySelector("h2.o-name");
+    xNameSpace.textContent = xName;
+    oNameSpace.textContent = oName;
+  };
+
+  const renderParagraphNextMove = () => {
+    const paragraph = textContainer.querySelector("p");
+    if (currentTurn === "x") {
+      paragraph.textContent = `${xName}, your turn!`;
+    }
+    if (currentTurn === "o") {
+      paragraph.textContent = `${oName}, your turn!`;
+    }
+  };
+
+  const renderParagraphResult = (result) => {
+    const paragraph = textContainer.querySelector("p");
+    if (result === "x") {
+      paragraph.innerHTML = `<b>${xName}</b> wins!`;
+    }
+    if (result === "o") {
+      paragraph.innerHTML = `<b>${oName}</b> wins!`;
+    }
+    if (result === "tie") {
+      paragraph.textContent = "It's a tie! Play again?";
     }
   };
 
@@ -51,13 +85,21 @@ const displayController = (() => {
     const el = textContainer.querySelector(".again");
     textContainer.removeChild(el);
   };
+  const removeNameForms = () => {
+    const el = textContainer.querySelector(".name-forms");
+    textContainer.removeChild(el);
+  };
 
   return {
     renderBoard,
+    renderScoreboard,
+    renderParagraphNextMove,
+    renderParagraphResult,
     addStartButton,
     removeStartButton,
     addAgainButton,
     removeAgainButton,
+    removeNameForms,
     hover,
     unhover,
     resetHovers,
@@ -168,6 +210,33 @@ const gameboard = (() => {
   return { gameboardArray, reset, placeMarker };
 })();
 
+let xName = "";
+let oName = "";
+
+// SCOREBOARD OBJECT
+const scoreboard = (() => {
+  const score = [0, 0];
+  const getNames = () => {
+    const formX = document.querySelector("#x-name");
+    if (formX.value == "") {
+      xName = "Player 1";
+    } else {
+      xName = formX.value;
+    }
+    const formO = document.querySelector("#o-name");
+    if (formO.value == "") {
+      oName = "Player 2";
+    } else {
+      oName = formO.value;
+    }
+  };
+  const render = () => {
+    displayController.renderScoreboard();
+  };
+
+  return { score, getNames, render };
+})();
+
 // GAME OBJECT
 let currentTurn = "x";
 displayController.addStartButton();
@@ -215,10 +284,14 @@ const game = (() => {
   };
 
   const init = () => {
+    scoreboard.getNames();
+    displayController.removeNameForms();
+    scoreboard.render();
     eventController.startButton.unbind();
     displayController.removeStartButton();
     gameboard.reset();
     eventController.board.bind();
+    displayController.renderParagraphNextMove();
   };
 
   const initAgain = () => {
@@ -227,6 +300,7 @@ const game = (() => {
     displayController.removeAgainButton();
     gameboard.reset();
     eventController.board.bind();
+    displayController.renderParagraphNextMove();
   };
 
   const makeMove = (event) => {
@@ -234,6 +308,7 @@ const game = (() => {
     if (gameboard.placeMarker(event.target.dataset.index, marker) === true) {
       currentTurn = takeTurns();
     }
+    displayController.renderParagraphNextMove();
     let result = checkWinner();
     if (result !== null) {
       finish(result);
@@ -241,7 +316,13 @@ const game = (() => {
   };
 
   const finish = (result) => {
-    console.log(result);
+    if (result === "x") {
+      scoreboard.score[0] += 1;
+    } else if (result === "o") {
+      scoreboard.score[1] += 1;
+    }
+    scoreboard.render();
+    displayController.renderParagraphResult(result);
     eventController.board.unbind();
     displayController.addAgainButton();
     eventController.againButton.bind();
