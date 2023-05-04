@@ -1,3 +1,5 @@
+"use strict";
+
 // DISPLAY CONTROLLER
 const displayController = (() => {
   const htmlElements = {
